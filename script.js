@@ -5,6 +5,8 @@ const saveConfirmed = document.querySelector('.save-confirmed');
 const loader = document.querySelector('.loader');
 
 let resultsArray = [];
+let favorites = {};
+
 
 function updateDOM() {
     resultsArray.forEach((result) => {
@@ -33,6 +35,7 @@ function updateDOM() {
         const saveText = document.createElement('p');
         saveText.classList.add('clickable');
         saveText.textContent = 'Add to favorites';
+        saveText.setAttribute('onClick', `saveFavorite('${result.url}')`);
         // card text
         const cardText = document.createElement('p');
         cardText.textContent = result.explanation;
@@ -79,6 +82,24 @@ async function getNasaPictures() {
         console.log(error);
     }
 
+}
+
+// save favorite
+function saveFavorite(itemUrl) {
+    // loop thru results array
+    resultsArray.forEach((item) => {
+        if (item.url.includes(itemUrl) && !favorites[itemUrl]) {
+            favorites[itemUrl] = item;
+
+            // show save confirmation for 2s
+            saveConfirmed.hidden = false;
+            setTimeout(() => {
+                saveConfirmed.hidden = true;
+            }, 2000);
+            // saving in local storage
+            localStorage.setItem('nasaFavorites', JSON.stringify(favorites));
+        }
+    });
 }
 
 // onload
